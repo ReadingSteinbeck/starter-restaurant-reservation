@@ -25,6 +25,12 @@ function update(updatedReservation) {
     .then((reservations) => reservations[0]);
 }
 
+function setStatus(reservation_id, status) {
+  return knex("reservations")
+    .where({ reservation_id })
+    .update({ status: status });
+}
+
 //POST
 function create(reservation) {
   return knex("reservations")
@@ -40,4 +46,5 @@ module.exports = {
   delete: destroy,
   read,
   update,
+  setStatus,
 };

@@ -22,11 +22,12 @@ const VALID_PROPERTIES = [
   "reservation_date",
   "reservation_time",
   "people",
+  "status",
 ];
 
 function peopleIsANumber(req, res, next) {
-  const { data = {} } = req.body;
-  const { people } = data;
+  const { people } = req.body.data;
+
   if (Number.isInteger(people)) {
     return next();
   }
@@ -59,8 +60,8 @@ function getDateAndTimeHelper() {
     date.getDate(),
   ].join("");
   const currentTime = [
-    date.getHours() < 10 ? 0 + date.getHours() : date.getHours(),
-    date.getMinutes() < 10 ? 0 + date.getMinutes() : date.getMinutes(),
+    date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
+    date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
   ].join("");
 
   return parseInt(currentDate + currentTime);
@@ -79,8 +80,7 @@ async function reservationExists(req, res, next) {
 }
 
 function isInFuture(req, res, next) {
-  const { data = {} } = req.body;
-  let { reservation_time, reservation_date } = data;
+  let { reservation_time, reservation_date } = req.body.data;
   reservation_date = reservation_date.slice(0, 10).replaceAll("-", "");
 
   reservation_time = reservation_time.replaceAll(":", "");
@@ -95,7 +95,7 @@ function isInFuture(req, res, next) {
     });
   }
   const now = getDateAndTimeHelper();
-
+  console.log(now, reservationDateAndTime);
   if (now < reservationDateAndTime) {
     return next();
   }
@@ -107,8 +107,8 @@ function isInFuture(req, res, next) {
 }
 
 function isNotTuesday(req, res, next) {
-  const { data = {} } = req.body;
-  let { reservation_date } = data;
+  let { reservation_date } = req.body.data;
+
   const date = new Date(reservation_date + "T22:00:00");
   if (date.getDay() !== 2) {
     return next();
@@ -117,8 +117,8 @@ function isNotTuesday(req, res, next) {
 }
 
 function isDuringWorkHours(req, res, next) {
-  const { data = {} } = req.body;
-  let { reservation_time } = data;
+  let { reservation_time } = req.body.data;
+
   reservation_time = parseInt(reservation_time.replaceAll(":", ""));
 
   if (reservation_time > 1030 && reservation_time < 2130) {
@@ -130,11 +130,47 @@ function isDuringWorkHours(req, res, next) {
   });
 }
 
+function checkStatusCreate(req, res, next) {
+  const { status } = req.body.data;
+  if (status === "booked" || !status) {
+    return next();
+  }
+  next({
+    status: 400,
+    message: `Status: ${status} must be booked.`,
+  });
+}
+function checkStatusUpdate(req, res, next) {
+  const { status } = req.body.data;
+
+  if (["booked", "seated", "finished"].includes(status)) {
+    return next();
+  }
+  next({
+    status: 400,
+    message: `Status: ${status} must be booked, seated or finished.`,
+  });
+}
+function checkCurrentStatus(req, res, next) {
+  const currentStatus = res.locals.reservation.status;
+  if (currentStatus === "finished") {
+    return next({
+      status: 400,
+      message: `A finished reservation cannot be updated.`,
+    });
+  }
+  next();
+}
+
 //HTTP Verbs
 async function list(req, res) {
   if (req.query.date) {
+    let reservations = await reservationsService.listByDate(req.query.date);
+    const data = reservations.filter(
+      (reservation) => reservation.status !== "finished"
+    );
     res.json({
-      data: await reservationsService.listByDate(req.query.date),
+      data,
     });
   } else {
     res.json({
@@ -168,18 +204,34 @@ async function create(req, res) {
     .json({ data: await reservationsService.create(req.body.data) });
 }
 
+async function updateStatus(req, res) {
+  const { status } = req.body.data;
+  const { reservation_id } = res.locals.reservation;
+  await reservationsService.setStatus(reservation_id, status);
+  res.status(200).json({ data: { status } });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   read: [asyncErrorBoundary(reservationExists), read],
   update: [
     hasOnlyValidProperties,
+    peopleIsANumber,
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(update),
+  ],
+  updateStatus: [
+    hasOnlyValidProperties,
+    checkStatusUpdate,
+    asyncErrorBoundary(reservationExists),
+    checkCurrentStatus,
+    asyncErrorBoundary(updateStatus),
   ],
   delete: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(destroy)],
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,
+    checkStatusCreate,
     peopleIsANumber,
     isInFuture,
     isDuringWorkHours,
