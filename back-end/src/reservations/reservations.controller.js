@@ -23,6 +23,9 @@ const VALID_PROPERTIES = [
   "reservation_time",
   "people",
   "status",
+  "reservation_id",
+  "created_at",
+  "updated_at",
 ];
 
 function peopleIsANumber(req, res, next) {
@@ -78,13 +81,12 @@ async function reservationExists(req, res, next) {
     message: `Reservation ${req.params.reservationId} cannot be found.`,
   });
 }
-
-function isInFuture(req, res, next) {
+function reservationDateAndTimeAreValid(req, res, next) {
   let { reservation_time, reservation_date } = req.body.data;
   reservation_date = reservation_date.slice(0, 10).replaceAll("-", "");
 
   reservation_time = reservation_time.replaceAll(":", "");
-  const reservationDateAndTime = parseInt(reservation_date + reservation_time);
+
   if (
     !Number.isInteger(parseInt(reservation_time)) ||
     !Number.isInteger(parseInt(reservation_date))
@@ -94,8 +96,16 @@ function isInFuture(req, res, next) {
       message: `Reservations must have valid reservation_date and reservation_time properties.`,
     });
   }
+  res.locals.reservation_date = reservation_date;
+  res.locals.reservation_time = reservation_time;
+  next();
+}
+
+function isInFuture(req, res, next) {
+  const { reservation_time, reservation_date } = res.locals;
+  const reservationDateAndTime = parseInt(reservation_date + reservation_time);
   const now = getDateAndTimeHelper();
-  console.log(now, reservationDateAndTime);
+
   if (now < reservationDateAndTime) {
     return next();
   }
@@ -143,7 +153,7 @@ function checkStatusCreate(req, res, next) {
 function checkStatusUpdate(req, res, next) {
   const { status } = req.body.data;
 
-  if (["booked", "seated", "finished"].includes(status)) {
+  if (["booked", "seated", "finished", "cancelled"].includes(status)) {
     return next();
   }
   next({
@@ -171,6 +181,10 @@ async function list(req, res) {
     );
     res.json({
       data,
+    });
+  } else if (req.query.mobile_number) {
+    res.json({
+      data: await reservationsService.search(req.query.mobile_number),
     });
   } else {
     res.json({
@@ -216,6 +230,8 @@ module.exports = {
   read: [asyncErrorBoundary(reservationExists), read],
   update: [
     hasOnlyValidProperties,
+    hasRequiredProperties,
+    reservationDateAndTimeAreValid,
     peopleIsANumber,
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(update),
@@ -233,6 +249,7 @@ module.exports = {
     hasRequiredProperties,
     checkStatusCreate,
     peopleIsANumber,
+    reservationDateAndTimeAreValid,
     isInFuture,
     isDuringWorkHours,
     isNotTuesday,
