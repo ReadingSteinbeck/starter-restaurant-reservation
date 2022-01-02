@@ -34,6 +34,7 @@ function peopleIsANumber(req, res, next) {
   if (Number.isInteger(people)) {
     return next();
   }
+
   next({
     status: 400,
     message: `The people property must be a postive number.`,
@@ -57,10 +58,11 @@ function hasOnlyValidProperties(req, res, next) {
 }
 function getDateAndTimeHelper() {
   const date = new Date();
+  let month = date.getMonth() + 1;
   const currentDate = [
     date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
+    month < 10 ? "0" + month : month,
+    date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
   ].join("");
   const currentTime = [
     date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),

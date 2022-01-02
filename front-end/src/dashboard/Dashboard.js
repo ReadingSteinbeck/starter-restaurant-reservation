@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import React from "react";
+
 import ErrorAlert from "../layout/ErrorAlert";
+import ReservationList from "./ReservationList";
+import { previous, next, today } from "../utils/date-time";
+import { useHistory } from "react-router-dom";
+import "./Dashboard.css";
 
 /**
  * Defines the dashboard page.
@@ -8,19 +12,26 @@ import ErrorAlert from "../layout/ErrorAlert";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
-  const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
+function Dashboard({
+  date,
+  setDate,
+  setReservationsError,
+  reservationsError,
+  reservations,
+}) {
+  const history = useHistory();
 
-  useEffect(loadDashboard, [date]);
-
-  function loadDashboard() {
-    const abortController = new AbortController();
-    setReservationsError(null);
-    listReservations({ date }, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError);
-    return () => abortController.abort();
+  function dateHandleClick({ target }) {
+    if (target.name === "previous") {
+      setDate(previous(date));
+    }
+    if (target.name === "today") {
+      setDate(today());
+    }
+    if (target.name === "next") {
+      setDate(next(date));
+    }
+    history.push(`/dashboard?date=${date}`);
   }
 
   return (
@@ -30,7 +41,35 @@ function Dashboard({ date }) {
         <h4 className="mb-0">Reservations for date</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      {JSON.stringify(reservations)}
+
+      <ReservationList reservations={reservations} />
+
+      <div className="date-buttons">
+        <button
+          type="button"
+          name="previous"
+          className="btn btn-primary"
+          onClick={dateHandleClick}
+        >
+          Previous Day
+        </button>
+        <button
+          type="button"
+          className="btn btn-success"
+          name="today"
+          onClick={dateHandleClick}
+        >
+          Today
+        </button>
+        <button
+          type="button"
+          name="next"
+          className="btn btn-secondary"
+          onClick={dateHandleClick}
+        >
+          Next Day
+        </button>
+      </div>
     </main>
   );
 }
