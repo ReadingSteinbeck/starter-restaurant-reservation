@@ -102,7 +102,12 @@ function read(req, res) {
   res.json({ data });
 }
 
+// async function create(req, res) {
+//   res.status(201).json({ data: await tablesService.create(req.body.data) });
+// }
+
 async function create(req, res) {
+  req.body.data.status = !req.body.data.reservation_id ? "free" : "occupied";
   res.status(201).json({ data: await tablesService.create(req.body.data) });
 }
 

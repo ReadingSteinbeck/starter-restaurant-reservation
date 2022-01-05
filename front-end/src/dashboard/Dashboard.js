@@ -2,6 +2,7 @@ import React from "react";
 
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationList from "./ReservationList";
+import TableList from "./TableList";
 import { previous, next, today } from "../utils/date-time";
 import { useHistory } from "react-router-dom";
 import "./Dashboard.css";
@@ -14,35 +15,49 @@ import "./Dashboard.css";
  */
 function Dashboard({
   date,
-  setDate,
   setReservationsError,
   reservationsError,
   reservations,
+  tables,
+  tablesError,
+  loadDashboard,
 }) {
   const history = useHistory();
 
   function dateHandleClick({ target }) {
+    if (!date) date = today();
+
     if (target.name === "previous") {
-      setDate(previous(date));
+      history.push(`/dashboard?date=${previous(date)}`);
     }
     if (target.name === "today") {
-      setDate(today());
+      history.push(`/dashboard?date=${today()}`);
     }
     if (target.name === "next") {
-      setDate(next(date));
+      history.push(`/dashboard?date=${next(date)}`);
     }
-    history.push(`/dashboard?date=${date}`);
   }
 
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
-      </div>
-      <ErrorAlert error={reservationsError} />
+      <div className="d-flex flex-row">
+        <div>
+          <div className="d-md-flex mb-3">
+            <h4 className="mb-0">Reservations for date</h4>
+          </div>
+          <ErrorAlert error={reservationsError} />
 
-      <ReservationList reservations={reservations} />
+          <ReservationList reservations={reservations} />
+        </div>
+        <div>
+          <div className="d-md-flex mb-3">
+            <h4 className="mb-0">Table Availability</h4>
+          </div>
+          <ErrorAlert error={tablesError} />
+          <TableList tables={tables} loadDashboard={loadDashboard} />
+        </div>
+      </div>
 
       <div className="date-buttons">
         <button

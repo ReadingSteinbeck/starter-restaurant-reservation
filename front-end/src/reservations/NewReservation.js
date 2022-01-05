@@ -3,7 +3,10 @@ import { postReservation } from "../utils/api";
 import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function NewReservation({ setDate }) {
+function NewReservation({
+  //setDate,
+  loadDashboard,
+}) {
   const initialReservationState = {
     first_name: "",
     last_name: "",
@@ -29,12 +32,16 @@ function NewReservation({ setDate }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const abortController = new AbortController();
 
     if (validateForm()) {
-      await postReservation(reservationData);
-      setDate(reservationData.reservation_date);
+      await postReservation(reservationData, abortController.signal);
+
+      loadDashboard();
+
       history.push(`/dashboard?date=${reservationData.reservation_date}`);
     }
+    return () => abortController;
   };
   //Validations
   const dataErrors = [];
@@ -56,13 +63,21 @@ function NewReservation({ setDate }) {
   }
 
   function validateForm() {
-    let { reservation_time, reservation_date } = reservationData;
+    let { reservation_time, reservation_date, people } = reservationData;
     const resDate = reservation_date.slice(0, 10).replaceAll("-", "");
     const resTime = parseInt(reservation_time.replaceAll(":", ""));
     const reservationDateAndTime = parseInt(resDate + resTime);
     const [currentDate, currentTime] = getDateAndTimeHelper();
     const now = parseInt(currentDate + currentTime);
     const date = new Date(reservation_date + "T22:00:00");
+
+    //Checks if people is greater than 1
+    if (people < 1) {
+      dataErrors.push({
+        message: `People must be a positive number.`,
+      });
+      setReservationsError([...dataErrors]);
+    }
 
     //Checks if reservation is during working hours
     if (resTime <= 1030 || resTime >= 2130) {

@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { setDefaultOptions } = require('expect-puppeteer');
+const { setDefaultOptions } = require("expect-puppeteer");
 const fs = require("fs");
 const fsPromises = fs.promises;
 
@@ -72,6 +72,7 @@ describe("US-05 - Finish an occupied table - E2E", () => {
 
       const finishButtonSelector = `[data-table-id-finish="${table.table_id}"]`;
       await page.waitForSelector(finishButtonSelector);
+      console.log(finishButtonSelector);
 
       page.on("dialog", async (dialog) => {
         expect(dialog.message()).toContain(
