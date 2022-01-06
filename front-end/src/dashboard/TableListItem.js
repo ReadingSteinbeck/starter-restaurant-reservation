@@ -19,7 +19,7 @@ function TableListItem({ table, loadDashboard }) {
         <button
           data-table-id-finish={table.table_id}
           type="button"
-          className=" btn btn-secondary m-1 "
+          className=" btn btn-sm btn-danger  "
           onClick={handleClick}
         >
           Finish
@@ -29,12 +29,26 @@ function TableListItem({ table, loadDashboard }) {
     return null;
   }
   return (
-    <div className="border bg-light border-secondary mt-3">
-      <h2>{table.table_name}</h2>
-      <p>Capacity: {table.capacity}</p>
-      <p data-table-id-status={table.table_id}>Status: {table.status}</p>
-      <FinishButton />
-    </div>
+    <>
+      <td>{table.table_name}</td>
+      <td>{table.capacity}</td>
+      <td data-table-id-status={table.table_id}>{table.status}</td>
+      <td>
+        <FinishButton />
+      </td>
+    </>
+
+    // <div className="border bg-light border-secondary mt-3">
+    //   <h2>{table.table_name}</h2>
+    //   <p>Capacity: {table.capacity}</p>
+    //   {/* <p className={`data-table-id-status=${table.table_id}`}>
+    //     Status: {table.status}
+    //   </p> */}
+    //   <p className={`data-table-id-status=${table.table_id}`}>
+    //     Status: {table.status}
+    //   </p>
+    //   <FinishButton />
+    // </div>
   );
 }
 export default TableListItem;

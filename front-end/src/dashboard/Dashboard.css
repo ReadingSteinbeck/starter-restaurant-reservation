@@ -1,3 +1,13 @@
-ul {
-  list-style-type: none;
+table {
+  text-align: center;
+}
+
+h4 {
+  color: #745fb5;
+}
+th {
+  color: #3d90ae;
+}
+thead {
+  background-color: #343a40;
 }

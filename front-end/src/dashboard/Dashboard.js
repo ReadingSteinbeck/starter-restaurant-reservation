@@ -40,8 +40,7 @@ function Dashboard({
 
   return (
     <main>
-      <h1>Dashboard</h1>
-      <div className="d-flex flex-row">
+      <div className="d-flex flex-column">
         <div>
           <div className="d-md-flex mb-3">
             <h4 className="mb-0">Reservations for date</h4>

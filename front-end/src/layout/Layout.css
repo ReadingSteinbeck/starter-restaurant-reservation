@@ -1,8 +1,13 @@
 .side-bar {
   background-color: #393a44;
   min-width: 200px;
+  overflow-x: hidden;
 }
 
 .reservation-form {
+  overflow-x: hidden;
   background-color: blue;
+}
+.container-fluid {
+  overflow-x: hidden;
 }

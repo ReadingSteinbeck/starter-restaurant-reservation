@@ -32,16 +32,19 @@ function NewReservation({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const abortController = new AbortController();
+    //const abortController = new AbortController();
 
     if (validateForm()) {
-      await postReservation(reservationData, abortController.signal);
+      await postReservation(
+        reservationData
+        //abortController.signal
+      );
 
       loadDashboard();
 
       history.push(`/dashboard?date=${reservationData.reservation_date}`);
     }
-    return () => abortController;
+    //return () => abortController.abort();
   };
   //Validations
   const dataErrors = [];
