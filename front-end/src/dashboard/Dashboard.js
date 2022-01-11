@@ -47,7 +47,10 @@ function Dashboard({
           </div>
           <ErrorAlert error={reservationsError} />
 
-          <ReservationList reservations={reservations} />
+          <ReservationList
+            reservations={reservations}
+            loadDashboard={loadDashboard}
+          />
         </div>
         <div>
           <div className="d-md-flex mb-3">

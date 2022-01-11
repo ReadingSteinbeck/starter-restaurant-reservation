@@ -215,6 +215,8 @@ async function destroy(req, res) {
 }
 
 async function create(req, res) {
+  req.body.data.status = "booked";
+
   res
     .status(201)
     .json({ data: await reservationsService.create(req.body.data) });

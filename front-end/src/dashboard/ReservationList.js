@@ -1,10 +1,13 @@
 import React from "react";
 import ReservationListItem from "./ReservationListItem";
 
-function ReservationList({ reservations }) {
+function ReservationList({ reservations, loadDashboard }) {
   const reservationList = reservations.map((reservation) => (
     <tr key={reservation.reservation_id}>
-      <ReservationListItem reservation={reservation} />
+      <ReservationListItem
+        reservation={reservation}
+        loadDashboard={loadDashboard}
+      />
     </tr>
   ));
   return (
@@ -27,16 +30,3 @@ function ReservationList({ reservations }) {
 }
 
 export default ReservationList;
-
-// function ReservationList({ reservations }) {
-//   const reservationList = reservations.map((reservation) => (
-//     <li key={reservation.reservation_id}>
-//       <ReservationListItem reservation={reservation} />
-//     </li>
-//   ));
-//   return (
-//     <div>
-//       <ul>{reservationList}</ul>
-//     </div>
-//   );
-// }

@@ -1,23 +1,37 @@
 import React from "react";
+import { changeReservationStatus } from "../utils/api";
 
-function ReservationListItem({ reservation }) {
+function ReservationListItem({ reservation, loadDashboard }) {
+  function SeatButton() {
+    if (reservation.status === "booked") {
+      return (
+        <a href={`/reservations/${reservation.reservation_id}/seat`}>
+          <button
+            type="button"
+            name="seat"
+            className="btn btn-sm btn-success"
+            onClick={{ handleSeatClick }}
+          >
+            Seat
+          </button>
+        </a>
+      );
+    }
+    return null;
+  }
+  //Handler
+  async function handleSeatClick({ target }) {
+    const abortController = new AbortController();
+    await changeReservationStatus(
+      reservation.reservation_id,
+      "seated",
+      abortController.signal
+    );
+    loadDashboard();
+    return () => abortController.abort();
+  }
+
   return (
-    // <div className="border bg-light border-secondary mt-3">
-    //   <h2>
-    //     {reservation.first_name} {reservation.last_name}'s party of{" "}
-    //     {reservation.people}
-    //   </h2>
-    //   <p>Date: {reservation.reservation_date}</p>
-    //   <p>Time: {reservation.reservation_time}</p>
-    //   <p>Phone: {reservation.mobile_number}</p>
-    //   <div>
-    //     <a href={`/reservations/${reservation.reservation_id}/seat`}>
-    //       <button type="button" name="seat" className="btn btn-success">
-    //         Seat
-    //       </button>
-    //     </a>
-    //   </div>
-    // </div>
     <>
       <td>
         {reservation.first_name} {reservation.last_name}
@@ -27,11 +41,10 @@ function ReservationListItem({ reservation }) {
       <td> {reservation.reservation_time}</td>
       <td> {reservation.mobile_number}</td>
       <td>
-        <a href={`/reservations/${reservation.reservation_id}/seat`}>
-          <button type="button" name="seat" className="btn btn-sm btn-success">
-            Seat
-          </button>
-        </a>
+        <p data-reservation-id-status={reservation.reservation_id}>
+          {reservation.status}
+        </p>
+        <SeatButton />
       </td>
     </>
   );
