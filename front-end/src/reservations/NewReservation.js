@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { postReservation } from "../utils/api";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  postReservation,
+  readReservation,
+  updateReservation,
+} from "../utils/api";
+import { useHistory, useParams } from "react-router-dom";
+import ReservationForm from "./ReservationForm";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function NewReservation({
-  //setDate,
-  loadDashboard,
-}) {
+function NewReservation({ loadDashboard, edit }) {
   const initialReservationState = {
     first_name: "",
     last_name: "",
@@ -20,6 +22,30 @@ function NewReservation({
   });
   const [reservationsError, setReservationsError] = useState(null);
   const history = useHistory();
+  const { reservation_id } = useParams();
+
+  //Loads reservation data if editing reservation.
+  useEffect(() => {
+    const abortController = new AbortController();
+    if (edit) {
+      async function loadReservation() {
+        try {
+          const data = await readReservation(
+            reservation_id,
+            abortController.signal
+          );
+
+          data.reservation_time = data.reservation_time.slice(0, -3);
+
+          setReservationData({ ...data });
+        } catch (error) {
+          if (error.name !== "AbortError") setReservationsError(error);
+        }
+      }
+      loadReservation();
+      return () => abortController.abort();
+    }
+  }, [edit, reservation_id]);
 
   //Handlers
   const handleChange = ({ target }) => {
@@ -32,19 +58,32 @@ function NewReservation({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //const abortController = new AbortController();
 
-    if (validateForm()) {
-      await postReservation(
-        reservationData
-        //abortController.signal
-      );
+    const abortController = new AbortController();
+    if (edit) {
+      try {
+        if (validateForm()) {
+          await updateReservation(reservationData, abortController.signal);
+          loadDashboard();
+          history.push(`/dashboard?date=${reservationData.reservation_date}`);
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") setReservationsError(error);
+      }
+    } else {
+      if (validateForm()) {
+        try {
+          await postReservation(reservationData, abortController.signal);
 
-      loadDashboard();
+          loadDashboard();
 
-      history.push(`/dashboard?date=${reservationData.reservation_date}`);
+          history.push(`/dashboard?date=${reservationData.reservation_date}`);
+        } catch (error) {
+          if (error.name !== "AbortError") setReservationsError(error);
+        }
+      }
     }
-    //return () => abortController.abort();
+    return () => abortController.abort();
   };
   //Validations
   const dataErrors = [];
@@ -125,88 +164,11 @@ function NewReservation({
       <h1>New Reservation</h1>
       <ErrorList />
       <div>
-        <form onSubmit={handleSubmit}>
-          <div className="d-flex  flex-column p-3 ">
-            <label className="bg-light p-2 mt-1 " htmlFor="first_name">
-              <h3>First Name</h3>
-              <input
-                name="first_name"
-                type="text"
-                id="first_name"
-                value={reservationData.first_name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label className="bg-light p-2 mt-1 " htmlFor="last_name">
-              <h3>Last Name</h3>
-              <input
-                name="last_name"
-                type="text"
-                id="last_name"
-                value={reservationData.last_name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label className="bg-light p-2 mt-1 " htmlFor="mobile_number">
-              <h3>Mobile Number</h3>
-              <input
-                name="mobile_number"
-                type="text"
-                id="mobile_number"
-                value={reservationData.mobile_number}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label className="bg-light p-2 mt-1 " htmlFor="reservation_date">
-              <h3>Reservation Date</h3>
-              <input
-                name="reservation_date"
-                type="date"
-                id="reservation_date"
-                value={reservationData.reservation_date}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label className="bg-light p-2 mt-1 " htmlFor="reservation_time">
-              <h3>Reservation Time</h3>
-              <input
-                name="reservation_time"
-                type="time"
-                id="reservation_time"
-                value={reservationData.reservation_time}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label className="bg-light p-2 mt-1 " htmlFor="people">
-              <h3>People</h3>
-              <input
-                name="people"
-                type="number"
-                id="people"
-                value={reservationData.people}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <div className="bg-light p-2 mt-1 ">
-              <button
-                type="button"
-                className=" btn btn-secondary m-1"
-                onClick={() => history.goBack()}
-              >
-                Cancel
-              </button>
-              <button type="submit" className=" btn btn-primary m-1">
-                Submit
-              </button>
-            </div>
-          </div>
-        </form>
+        <ReservationForm
+          handleSubmit={handleSubmit}
+          handleChange={handleChange}
+          reservationData={reservationData}
+        />
       </div>
     </div>
   );

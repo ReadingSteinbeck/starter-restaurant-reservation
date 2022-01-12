@@ -60,6 +60,9 @@ function Routes() {
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservation tables={tables} loadDashboard={loadDashboard} />
       </Route>
+      <Route path="/reservations/:reservation_id/edit">
+        <NewReservation loadDashboard={loadDashboard} edit={true} />
+      </Route>
       <Route exact={true} path="/dashboard">
         <Dashboard
           date={date}

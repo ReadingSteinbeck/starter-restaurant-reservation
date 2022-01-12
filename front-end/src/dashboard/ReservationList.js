@@ -22,6 +22,7 @@ function ReservationList({ reservations, loadDashboard }) {
               <th>Time</th>
               <th>Phone</th>
               <th>Status</th>
+              <th>Options</th>
             </tr>
           </thead>
           <tbody>{reservationList}</tbody>

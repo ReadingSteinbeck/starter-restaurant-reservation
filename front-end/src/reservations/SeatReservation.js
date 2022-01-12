@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { readReservation, seatTable } from "../utils/api";
+import {
+  readReservation,
+  seatTable,
+  changeReservationStatus,
+} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function SeatReservation({ tables, loadDashboard }) {
@@ -28,6 +32,7 @@ function SeatReservation({ tables, loadDashboard }) {
 
     if (validateForm()) {
       await seatTable(reservation_id, tableId);
+      await changeReservationStatus(reservation_id, "seated");
       loadDashboard();
       history.push(`/dashboard`);
     }
@@ -38,12 +43,20 @@ function SeatReservation({ tables, loadDashboard }) {
   function validateForm() {
     //checks if reservation party is greater than table capacity
     const table = tables.find((table) => table.table_id === Number(tableId));
-
-    if (table.capacity < reservation.people)
+    if (!table) {
       dataErrors.push({
-        message: `Party size exceeds table's capacity.`,
+        message: `Table not found.`,
       });
-    setTableError([...dataErrors]);
+      setTableError([...dataErrors]);
+    } else {
+      if (table.capacity < reservation.people) {
+        dataErrors.push({
+          message: `Party size exceeds table's capacity.`,
+        });
+        setTableError([...dataErrors]);
+      }
+    }
+
     return dataErrors.length === 0;
   }
 
