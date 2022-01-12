@@ -5,9 +5,11 @@ import NotFound from "./NotFound";
 import NewReservation from "../reservations/NewReservation";
 import SeatReservation from "../reservations/SeatReservation";
 import NewTable from "../tables/NewTable";
+import Search from "../search/Search";
 import { today } from "../utils/date-time";
 import { listReservations, listTables } from "../utils/api";
 import useQuery from "../utils/useQuery";
+
 /**
  * Defines all the routes for the application.
  *
@@ -51,6 +53,9 @@ function Routes() {
       </Route>
       <Route path="/tables/new">
         <NewTable loadDashboard={loadDashboard} />
+      </Route>
+      <Route path="/search">
+        <Search />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservation tables={tables} loadDashboard={loadDashboard} />

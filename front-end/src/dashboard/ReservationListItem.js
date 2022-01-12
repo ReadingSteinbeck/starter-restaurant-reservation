@@ -10,7 +10,7 @@ function ReservationListItem({ reservation, loadDashboard }) {
             type="button"
             name="seat"
             className="btn btn-sm btn-success"
-            onClick={{ handleSeatClick }}
+            onClick={handleSeatClick}
           >
             Seat
           </button>

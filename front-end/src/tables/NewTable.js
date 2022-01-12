@@ -3,9 +3,6 @@ import { useHistory } from "react-router-dom";
 import { postTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
-//Table name: `<input name="table_name" />`, which must be at least 2 characters long.
-//Capacity: `<input name="capacity" />`, this is the number of people that can be seated at the table, which must be at least 1 person.
-
 function NewTable({ loadDashboard }) {
   const initialTableState = {
     table_name: "",
