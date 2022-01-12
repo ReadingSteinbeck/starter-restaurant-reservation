@@ -25,6 +25,7 @@ function Search() {
 
   return (
     <div>
+      <h1>Search Reservation</h1>
       <form onSubmit={handleSubmit}>
         <div className="d-flex  flex-column p-3 ">
           <label className="bg-light p-2 mt-1 " htmlFor="mobile_number">

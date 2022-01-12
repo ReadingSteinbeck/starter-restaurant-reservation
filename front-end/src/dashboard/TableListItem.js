@@ -2,15 +2,19 @@ import React from "react";
 import { finishTable } from "../utils/api";
 function TableListItem({ table, loadDashboard }) {
   async function handleClick({ target }) {
-    const message =
-      "Is this table ready to seat new guests? This cannot be undone.";
-    const result = window.confirm(message);
-    if (result) {
-      const abortController = new AbortController();
-      await finishTable(table.table_id, abortController.signal);
-      loadDashboard();
-      return () => abortController.abort();
+    const abortController = new AbortController();
+    try {
+      const message =
+        "Is this table ready to seat new guests? This cannot be undone.";
+      const result = window.confirm(message);
+      if (result) {
+        await finishTable(table.table_id, abortController.signal);
+        loadDashboard();
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") throw error;
     }
+    return () => abortController.abort();
   }
 
   function FinishButton() {
@@ -37,18 +41,6 @@ function TableListItem({ table, loadDashboard }) {
         <FinishButton />
       </td>
     </>
-
-    // <div className="border bg-light border-secondary mt-3">
-    //   <h2>{table.table_name}</h2>
-    //   <p>Capacity: {table.capacity}</p>
-    //   {/* <p className={`data-table-id-status=${table.table_id}`}>
-    //     Status: {table.status}
-    //   </p> */}
-    //   <p className={`data-table-id-status=${table.table_id}`}>
-    //     Status: {table.status}
-    //   </p>
-    //   <FinishButton />
-    // </div>
   );
 }
 export default TableListItem;

@@ -50,20 +50,25 @@ function ReservationListItem({ reservation, loadDashboard }) {
   //Handler
 
   async function handleCancelClick() {
-    const message =
-      "Do you want to cancel this reservation? This cannot be undone.";
-    const result = window.confirm(message);
-    if (result) {
-      const abortController = new AbortController();
-      await changeReservationStatus(
-        reservation.reservation_id,
-        "cancelled",
-        abortController.signal
-      );
-      loadDashboard();
-      return () => abortController.abort();
+    const abortController = new AbortController();
+    try {
+      const message =
+        "Do you want to cancel this reservation? This cannot be undone.";
+      const result = window.confirm(message);
+      if (result) {
+        await changeReservationStatus(
+          reservation.reservation_id,
+          "cancelled",
+          abortController.signal
+        );
+        loadDashboard();
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") errorList.push(error);
     }
+    return () => abortController.abort();
   }
+  const errorList = [];
 
   if (reservation.status !== "cancelled")
     return (
@@ -79,11 +84,9 @@ function ReservationListItem({ reservation, loadDashboard }) {
           {reservation.status}
         </td>
         <td>
-          <div>
-            <SeatButton />
-            <EditButton reservation={reservation} />
-            <CancelButton />
-          </div>
+          <SeatButton />
+          <EditButton reservation={reservation} />
+          <CancelButton />
         </td>
       </>
     );

@@ -9,6 +9,7 @@ import Search from "../search/Search";
 import { today } from "../utils/date-time";
 import { listReservations, listTables } from "../utils/api";
 import useQuery from "../utils/useQuery";
+import "./Routes.css";
 
 /**
  * Defines all the routes for the application.

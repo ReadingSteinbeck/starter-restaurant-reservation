@@ -16,10 +16,19 @@ function SeatReservation({ tables, loadDashboard }) {
 
   const reservation_id = useParams().reservation_id;
   useEffect(() => {
+    const abortController = new AbortController();
+
     async function loadReservation() {
-      setReservation(await readReservation(reservation_id));
+      try {
+        setReservation(
+          await readReservation(reservation_id, abortController.signal)
+        );
+      } catch (error) {
+        if (error.name !== "AbortError") setTableError(error);
+      }
     }
     loadReservation();
+    return () => abortController.abort();
   }, [reservation_id]);
 
   // Handlers
@@ -29,13 +38,23 @@ function SeatReservation({ tables, loadDashboard }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const abortController = new AbortController();
 
     if (validateForm()) {
-      await seatTable(reservation_id, tableId);
-      await changeReservationStatus(reservation_id, "seated");
+      try {
+        await seatTable(reservation_id, tableId, abortController.signal);
+        await changeReservationStatus(
+          reservation_id,
+          "seated",
+          abortController.signal
+        );
+      } catch (error) {
+        if (error.name !== "AbortError") setTableError(error);
+      }
       loadDashboard();
       history.push(`/dashboard`);
     }
+    return () => abortController.abort();
   };
   //Validations
   const dataErrors = [];

@@ -65,14 +65,14 @@ function Dashboard({
         <button
           type="button"
           name="previous"
-          className="btn btn-primary"
+          className="btn btn-primary ml-1"
           onClick={dateHandleClick}
         >
           Previous Day
         </button>
         <button
           type="button"
-          className="btn btn-success"
+          className="btn btn-success ml-1"
           name="today"
           onClick={dateHandleClick}
         >
@@ -81,7 +81,7 @@ function Dashboard({
         <button
           type="button"
           name="next"
-          className="btn btn-secondary"
+          className="btn btn-secondary ml-1"
           onClick={dateHandleClick}
         >
           Next Day
