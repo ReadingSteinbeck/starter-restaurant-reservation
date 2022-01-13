@@ -85,9 +85,10 @@ async function reservationExists(req, res, next) {
 }
 function reservationDateAndTimeAreValid(req, res, next) {
   let { reservation_time, reservation_date } = req.body.data;
-  reservation_date = reservation_date.slice(0, 10).replaceAll("-", "");
+  // reservation_date = reservation_date.slice(0, 10).replaceAll("-", "");
+  reservation_date = reservation_date.slice(0, 10).replace(/-/g, "");
 
-  reservation_time = reservation_time.replaceAll(":", "");
+  reservation_time = reservation_time.replace(/:/g, "");
 
   if (
     !Number.isInteger(parseInt(reservation_time)) ||
@@ -131,7 +132,8 @@ function isNotTuesday(req, res, next) {
 function isDuringWorkHours(req, res, next) {
   let { reservation_time } = req.body.data;
 
-  reservation_time = parseInt(reservation_time.replaceAll(":", ""));
+  //reservation_time = parseInt(reservation_time.replaceAll(":", ""));
+  reservation_time = parseInt(reservation_time.replace(/:/g, ""));
 
   if (reservation_time > 1030 && reservation_time < 2130) {
     return next();
