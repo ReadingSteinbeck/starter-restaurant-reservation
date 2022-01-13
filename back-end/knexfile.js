@@ -7,6 +7,7 @@
 require("dotenv").config();
 const path = require("path");
 
+//Delete later?
 // const {
 //   DATABASE_URL = "postgresql://postgres@localhost/postgres",
 //   DATABASE_URL_DEVELOPMENT = "postgresql://postgres@localhost/postgres",
