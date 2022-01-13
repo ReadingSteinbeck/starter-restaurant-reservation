@@ -59,6 +59,7 @@ function NewReservation({ loadDashboard, edit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(reservationData.reservation_date);
+    console.log(reservationsError);
 
     const abortController = new AbortController();
     if (edit) {
@@ -112,8 +113,6 @@ function NewReservation({ loadDashboard, edit }) {
   function validateForm() {
     let { reservation_time, reservation_date, people } = reservationData;
     const resDate = reservation_date.slice(0, 10).replace(/-/g, "");
-    console.log(`Inside validateForm ${resDate}`);
-    //const resTime = parseInt(reservation_time.replaceAll(":", ""));
     const resTime = parseInt(reservation_time.replace(/:/g, ""));
     const reservationDateAndTime = parseInt(resDate + resTime);
     const [currentDate, currentTime] = getDateAndTimeHelper();
