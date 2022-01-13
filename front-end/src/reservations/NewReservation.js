@@ -58,6 +58,7 @@ function NewReservation({ loadDashboard, edit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(reservationData.reservation_date);
 
     const abortController = new AbortController();
     if (edit) {
@@ -71,12 +72,13 @@ function NewReservation({ loadDashboard, edit }) {
         if (error.name !== "AbortError") console.log(error);
       }
     } else {
+      console.log(validateForm());
       if (validateForm()) {
         console.log(`Passed Validation`);
         try {
-          console.log("Trying to post");
-          await postReservation(reservationData, abortController.signal);
+          console.log("Inside Try", reservationData.reservation_date);
 
+          await postReservation(reservationData, abortController.signal);
           loadDashboard();
 
           history.push(`/dashboard?date=${reservationData.reservation_date}`);
@@ -109,8 +111,10 @@ function NewReservation({ loadDashboard, edit }) {
 
   function validateForm() {
     let { reservation_time, reservation_date, people } = reservationData;
-    const resDate = reservation_date.slice(0, 10).replaceAll("-", "");
-    const resTime = parseInt(reservation_time.replaceAll(":", ""));
+    const resDate = reservation_date.slice(0, 10).replace(/-/g, "");
+    console.log(`Inside validateForm ${resDate}`);
+    //const resTime = parseInt(reservation_time.replaceAll(":", ""));
+    const resTime = parseInt(reservation_time.replace(/:/g, ""));
     const reservationDateAndTime = parseInt(resDate + resTime);
     const [currentDate, currentTime] = getDateAndTimeHelper();
     const now = parseInt(currentDate + currentTime);
