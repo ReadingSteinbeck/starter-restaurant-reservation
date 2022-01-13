@@ -39,7 +39,7 @@ function NewReservation({ loadDashboard, edit }) {
 
           setReservationData({ ...data });
         } catch (error) {
-          if (error.name !== "AbortError") setReservationsError(error);
+          if (error.name !== "AbortError") throw error;
         }
       }
       loadReservation();
@@ -68,18 +68,21 @@ function NewReservation({ loadDashboard, edit }) {
           history.push(`/dashboard?date=${reservationData.reservation_date}`);
         }
       } catch (error) {
-        if (error.name !== "AbortError") setReservationsError(error);
+        if (error.name !== "AbortError") console.log(error);
       }
     } else {
       if (validateForm()) {
+        console.log(`Passed Validation`);
         try {
+          console.log("Trying to post");
           await postReservation(reservationData, abortController.signal);
 
           loadDashboard();
 
           history.push(`/dashboard?date=${reservationData.reservation_date}`);
         } catch (error) {
-          if (error.name !== "AbortError") setReservationsError(error);
+          console.log(`Activated Catch`);
+          if (error.name !== "AbortError") console.log(error);
         }
       }
     }
