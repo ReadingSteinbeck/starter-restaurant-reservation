@@ -20,6 +20,9 @@
 .env.production.local
 .vercel
 .env
+.env.production
+.env.sample
+.env.development
 
 npm-debug.log*
 yarn-debug.log*
