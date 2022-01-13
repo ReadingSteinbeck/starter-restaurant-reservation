@@ -106,6 +106,7 @@ function reservationDateAndTimeAreValid(req, res, next) {
 
 function isInFuture(req, res, next) {
   const { reservation_time, reservation_date } = res.locals;
+  console.log(`Time: ${reservation_time}, Date: ${reservation_date}`);
   const reservationDateAndTime = parseInt(reservation_date + reservation_time);
   const now = getDateAndTimeHelper();
 
