@@ -58,8 +58,6 @@ function NewReservation({ loadDashboard, edit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(reservationData.reservation_date);
-    console.log(reservationsError);
 
     const abortController = new AbortController();
     if (edit) {
@@ -73,18 +71,12 @@ function NewReservation({ loadDashboard, edit }) {
         if (error.name !== "AbortError") console.log(error);
       }
     } else {
-      console.log(validateForm());
       if (validateForm()) {
-        console.log(`Passed Validation`);
         try {
-          console.log("Inside Try", reservationData.reservation_date);
-
           await postReservation(reservationData, abortController.signal);
           loadDashboard();
-
           history.push(`/dashboard?date=${reservationData.reservation_date}`);
         } catch (error) {
-          console.log(`Activated Catch`);
           if (error.name !== "AbortError") console.log(error);
         }
       }

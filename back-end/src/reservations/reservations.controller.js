@@ -85,7 +85,7 @@ async function reservationExists(req, res, next) {
 }
 function reservationDateAndTimeAreValid(req, res, next) {
   let { reservation_time, reservation_date } = req.body.data;
-  // reservation_date = reservation_date.slice(0, 10).replaceAll("-", "");
+
   reservation_date = reservation_date.slice(0, 10).replace(/-/g, "");
 
   reservation_time = reservation_time.replace(/:/g, "");
@@ -107,10 +107,8 @@ function reservationDateAndTimeAreValid(req, res, next) {
 function isInFuture(req, res, next) {
   const { reservation_time, reservation_date } = res.locals;
   const reservationDateAndTime = parseInt(reservation_date + reservation_time);
+  //When deployed to heroku now is now ~5hours ahead
   const now = getDateAndTimeHelper();
-  console.log(`Time: ${reservation_time}, Date: ${reservation_date}`);
-  console.log(`resDateTime ${reservationDateAndTime}, now ${now}`);
-
   if (now < reservationDateAndTime) {
     return next();
   }
@@ -134,7 +132,6 @@ function isNotTuesday(req, res, next) {
 function isDuringWorkHours(req, res, next) {
   let { reservation_time } = req.body.data;
 
-  //reservation_time = parseInt(reservation_time.replaceAll(":", ""));
   reservation_time = parseInt(reservation_time.replace(/:/g, ""));
 
   if (reservation_time > 1030 && reservation_time < 2130) {
