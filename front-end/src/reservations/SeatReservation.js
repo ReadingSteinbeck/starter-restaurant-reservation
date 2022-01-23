@@ -6,6 +6,7 @@ import {
   changeReservationStatus,
 } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import TableList from "../dashboard/TableList";
 
 function SeatReservation({ tables, loadDashboard }) {
   const [reservation, setReservation] = useState("");
@@ -101,51 +102,56 @@ function SeatReservation({ tables, loadDashboard }) {
     <div>
       <h1 className="d-flex justify-content-center">Seat Reservation</h1>
       <ErrorList />
-      <div className=" border bg-light border-secondary mt-3 ">
-        <h2 className="d-flex justify-content-center">
-          Seat {reservation.first_name} {reservation.last_name}'s party of{" "}
-          {reservation.people}
-        </h2>
+      <div className="d-flex flex-wrap justify-content-center">
+        <div className=" border bg-light border-secondary m-1 ">
+          <h2 className="d-flex justify-content-center">
+            Seat {reservation.first_name} {reservation.last_name}'s party of{" "}
+            {reservation.people}
+          </h2>
 
-        <div className="d-flex justify-content-center ">
-          Date: {reservation.reservation_date}
-        </div>
-        <div className="d-flex justify-content-center ">
-          Time: {reservation.reservation_time}
-        </div>
-        <div className="d-flex justify-content-center ">
-          Phone: {reservation.mobile_number}
-        </div>
+          <div className="d-flex justify-content-center ">
+            Date: {reservation.reservation_date}
+          </div>
+          <div className="d-flex justify-content-center ">
+            Time: {reservation.reservation_time}
+          </div>
+          <div className="d-flex justify-content-center ">
+            Phone: {reservation.mobile_number}
+          </div>
 
-        <div>
-          <form onSubmit={handleSubmit}>
-            <div className="d-flex justify-content-center ">
-              <label htmlFor="table_id">
-                <select
-                  className="custom-select"
-                  name="table_id"
-                  id="table_id"
-                  value={tableId}
-                  onChange={handleChange}
+          <div>
+            <form onSubmit={handleSubmit}>
+              <div className="d-flex justify-content-center ">
+                <label htmlFor="table_id">
+                  <select
+                    className="custom-select"
+                    name="table_id"
+                    id="table_id"
+                    value={tableId}
+                    onChange={handleChange}
+                  >
+                    <option value={0}>Choose a table</option>
+                    {formSelectOptions}
+                  </select>
+                </label>
+              </div>
+              <div className="bg-light p-2 mt-1 d-flex justify-content-center">
+                <button
+                  type="button"
+                  className=" btn btn-secondary m-1"
+                  onClick={() => history.goBack()}
                 >
-                  <option value={0}>Choose a table</option>
-                  {formSelectOptions}
-                </select>
-              </label>
-            </div>
-            <div className="bg-light p-2 mt-1 d-flex justify-content-center">
-              <button
-                type="button"
-                className=" btn btn-secondary m-1"
-                onClick={() => history.goBack()}
-              >
-                Cancel
-              </button>
-              <button type="submit" className=" btn btn-primary m-1">
-                Submit
-              </button>
-            </div>
-          </form>
+                  Cancel
+                </button>
+                <button type="submit" className=" btn btn-primary m-1">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className="m-1">
+          <TableList tables={tables} loadDashboard={loadDashboard} />
         </div>
       </div>
     </div>
