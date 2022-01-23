@@ -159,7 +159,7 @@ function NewReservation({ loadDashboard, edit }) {
 
   return (
     <div>
-      <h1>New Reservation</h1>
+      <h1 className="d-flex justify-content-center">Your Reservation</h1>
       <ErrorList />
       <div>
         <ReservationForm

@@ -9,10 +9,10 @@ function TableList({ tables, loadDashboard }) {
   ));
   return (
     <div>
-      <table className="table table-sm-responsive  align-content-center">
+      <table className="table table-responsive  align-content-center">
         <thead>
           <tr>
-            <th>Table Name</th>
+            <th>Table</th>
             <th>Capacity</th>
             <th>Status</th>
             <th>Finish</th>

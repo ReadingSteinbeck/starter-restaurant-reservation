@@ -9,3 +9,12 @@
 .container-fluid {
   overflow-x: hidden;
 }
+
+.form-element {
+  background-color: grey;
+  min-width: 300px;
+}
+
+.reservation-item {
+  min-width: 180px;
+}

@@ -70,46 +70,49 @@ function NewTable({ loadDashboard }) {
   }
   return (
     <div>
-      <h1>New Table</h1>
+      <h1 className="d-flex justify-content-center">New Table</h1>
       <ErrorList />
       <div>
         <form onSubmit={handleSubmit}>
-          <div className="d-flex  flex-column p-3 ">
-            <label className="bg-light p-2 mt-1 " htmlFor="first_name">
-              <h3>Table Name</h3>
-              <input
-                name="table_name"
-                type="text"
-                id="table_name"
-                value={tableData.table_name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label className="bg-light p-2 mt-1 " htmlFor="people">
-              <h3>Capacity</h3>
-              <input
-                name="capacity"
-                type="number"
-                id="capacity"
-                value={tableData.capacity}
-                onChange={handleChange}
-                required
-              />
-            </label>
-
-            <div className="bg-light p-2 mt-1 ">
-              <button
-                type="button"
-                className=" btn btn-secondary m-1"
-                onClick={() => history.goBack()}
-              >
-                Cancel
-              </button>
-              <button type="submit" className=" btn btn-primary m-1">
-                Submit
-              </button>
+          <div className="d-flex justify-content-center flex-column flex-md-row flex-wrap p-3  ">
+            <div className="m-2 form-element d-flex justify-content-center bg-light">
+              <label className="bg-light p-2 mt-1 " htmlFor="first_name">
+                <h3>Table Name</h3>
+                <input
+                  name="table_name"
+                  type="text"
+                  id="table_name"
+                  value={tableData.table_name}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
             </div>
+            <div className="m-2 form-element d-flex justify-content-center bg-light">
+              <label className="bg-light p-2 mt-1 " htmlFor="people">
+                <h3>Capacity</h3>
+                <input
+                  name="capacity"
+                  type="number"
+                  id="capacity"
+                  value={tableData.capacity}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+            </div>
+          </div>
+          <div className="d-flex justify-content-center p-2 mt-1">
+            <button
+              type="button"
+              className=" btn btn-secondary m-1"
+              onClick={() => history.goBack()}
+            >
+              Cancel
+            </button>
+            <button type="submit" className=" btn btn-primary m-1">
+              Submit
+            </button>
           </div>
         </form>
       </div>

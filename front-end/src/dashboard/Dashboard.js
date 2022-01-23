@@ -42,26 +42,33 @@ function Dashboard({
     <main>
       <div className="d-flex flex-column">
         <div>
-          <div className="d-md-flex mb-3">
-            <h4 className="mb-0">Reservations for date</h4>
+          <div className="my-3">
+            <h4 className="d-flex justify-content-center">
+              Reservations for {date}
+            </h4>
           </div>
           <ErrorAlert error={reservationsError} />
-
-          <ReservationList
-            reservations={reservations}
-            loadDashboard={loadDashboard}
-          />
+          <div className="d-flex justify-content-center">
+            <ReservationList
+              reservations={reservations}
+              loadDashboard={loadDashboard}
+            />
+          </div>
         </div>
         <div>
-          <div className="d-md-flex mb-3">
-            <h4 className="mb-0">Table Availability</h4>
+          <div className="my-3">
+            <h4 className="d-flex justify-content-center">
+              Table Availability
+            </h4>
           </div>
           <ErrorAlert error={tablesError} />
-          <TableList tables={tables} loadDashboard={loadDashboard} />
+          <div className="d-flex  justify-content-center">
+            <TableList tables={tables} loadDashboard={loadDashboard} />
+          </div>
         </div>
       </div>
 
-      <div className="date-buttons">
+      <div className="date-buttons d-flex justify-content-center p-2 mt-1  mr-2">
         <button
           type="button"
           name="previous"
